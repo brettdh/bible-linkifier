@@ -1,0 +1,43 @@
+Bible Linkifier is a Chrome extension that searches for text in web pages
+that look like scripture references and turns them into links to the
+referenced passage.
+
+As it's my first attempt at a Chrome extension and I've only just
+decided to make it, currently it is only a copy of the source code to
+Mappy, from the Google Code Labs samples collection.  I hope to knock
+it out quickly in my spare time.
+
+Planned features:
+- Links to Bible Gateway
+  - Eventually, use your own preferred site
+- Popups for short passages
+  - Option for scrolling popup or "continue reading" link
+- Parse common translation abbreviations if given with reference
+- Choose your preferred translation
+  - Allow choice between cited and user-preferred translation
+- Optional (on/off) feature: highlight visible refs as they are found
+- Make sure not to interfere with the user's interactions
+  with the open page. Possible approaches to consider:
+  - Put text processing on a background thread if possible.
+  - Only search text that is currently visible, plus a little
+    scroll-ahead.
+  - Prefer to search when the user is not scrolling.
+- Fix bugs that show up in other Bible linkifiers.
+  - Overzealous matching (see jquery.com, things like '1-3')
+  - An extension called "Bible Verse Linker" does not work
+    for me on twitter.com, for reasons I haven't yet 
+    investigated, though I suspect it has something to do with
+    conflict with Twitter's own linkification code
+
+
+Possible tasks for later:
+- Pull out the 'linkification' code into a reusable library.
+  - (Actually, this will be my design approach from the start,
+     but it may take time to figure out the right API and features,
+     which will evolve with my extension, so doing this formally
+     will come later.)
+  - There appear to exist general linkification libraries for 
+    Javascript, but at a glance I didn't see any that help
+    developers turn regex-matched strings into domain-specific
+    links.  I aim to take out some of the legwork common to any
+    such linkifier, as described above.
