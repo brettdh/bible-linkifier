@@ -5,7 +5,8 @@ if (window == top) {
   });
 }
 
-function matchScriptureReference(str) {
+// returns the first scripture reference found in text, or null if none found.
+function matchScriptureReference(text) {
     var books = [
         "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", 
         "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
@@ -24,10 +25,20 @@ function matchScriptureReference(str) {
         "Revelation",
     ];
 
-    var books_re_group = books.join("|");
-    var re = new RegExp(books_re_group + "");
-    // TODO: continue.
-    return null;
+    var books_re_group = "(" + books.join("|") + ")";
+    var books_re_pattern = 
+        books_re_group + 
+        "\\s+[0-9]+" + // chapter number (required)
+        // verse range (optional)
+        "(:" +
+        "[0-9]+" + // single verse number
+        "(-[0-9]+)?" + // verse range endpoint (optional)
+        ")?"; // end optional verse range
+    
+    console.log(books_re_pattern);
+    var re = new RegExp(books_re_pattern);
+    var match = re.exec(text);
+    return match;
 }
 
 // Search the text nodes for scripture references and linkify them.
