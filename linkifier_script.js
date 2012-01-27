@@ -27,6 +27,7 @@ function matchScriptureReference(str) {
     var books_re_group = books.join("|");
     var re = new RegExp(books_re_group + "");
     // TODO: continue.
+    return null;
 }
 
 // Search the text nodes for scripture references and linkify them.
