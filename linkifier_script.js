@@ -1,12 +1,12 @@
 // The background page is asking us to find an address on the page.
 if (window == top) {
   chrome.extension.onRequest.addListener(function(req, sender, sendResponse) {
-    sendResponse(findAddress());
+    sendResponse(replaceAllScriptureReferences());
   });
 }
 
 // returns the first scripture reference found in text, or null if none found.
-function matchScriptureReference(text) {
+function regexMatchScriptureReference(text) {
     var books = [
         "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy", 
         "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel", 
@@ -36,48 +36,38 @@ function matchScriptureReference(text) {
         ")?"; // end optional verse range
     
     console.log(books_re_pattern);
-    var re = new RegExp(books_re_pattern);
-    var match = re.exec(text);
-    return match;
+    var re = new RegExp(books_re_pattern, "gi");
+    return re.exec(text);
+}
+
+function matchScriptureReference(text) {
+    if (regexMatchScriptureReference(text)) {
+        return true;
+    }
+    return false;
 }
 
 // Search the text nodes for scripture references and linkify them.
 // Return the number of references found.
-var findScriptureReference = function() {
-  var found;
-  var node = document.body;
-  var done = false;
-  while (!done) {
-    done = true;
-    for (var i = 0; i < node.childNodes.length; ++i) {
-      var child = node.childNodes[i];
-      if (child.textContent.match(re)) {
-        node = child;
-        found = node;
-        done = false;
-        break;
-      }
+var replaceAllScriptureReferences = function() {
+    var num_replaced = 0;
+
+    // breadth-first search through the DOM tree
+    var nodes_to_explore = [document.body];
+    while (nodes_to_explore.length > 0) {
+        var node = nodes_to_explore.shift();
+
+        if (node.nodeName == "A") {
+            // don't linkify any references that are already links
+            continue;
+        }
+        for (var i = 0; i < node.childNodes.length; ++i) {
+            nodes_to_explore.push(node.childNodes[i]);
+        }
+
+        node.textContent = replaceScriptureReferences(node.textContent);
+
     }
-  }
-  if (found) {
-    var text = "";
-    if (found.childNodes.length) {
-      for (var i = 0; i < found.childNodes.length; ++i) {
-        text += found.childNodes[i].textContent + " ";
-      }
-    } else {
-      text = found.textContent;
-    }
-    var match = re.exec(text);
-    if (match && match.length) {
-      console.log("found: " + match[0]);
-      var trim = /\s{2,}/g;
-      return match[0].replace(trim, " ");
-    } else {
-      console.log("bad initial match: " + found.textContent);
-      console.log("no match in: " + text);
-    }
-  }
-  return null;
+    return num_replaced;
 }
 
