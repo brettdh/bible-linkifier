@@ -17,4 +17,21 @@ $(document).ready(function(){
             ok( !matchScriptureReference(str), str + " is not a valid reference");
         }
     });
+
+    test("linkify all scripture references in a string", function() {
+        var refs = ["Genesis 4:3-4", "1 Chronicles 3"];
+        var text = "blah blee bloo " + refs[0] +
+                   " blargh blough " + refs[1] + " blaaa";
+        var linkified = replaceScriptureReferences(text);
+
+        var element = document.createElement("div");
+        element.innerHTML = linkified;
+        equal(element.childNodes.length, refs.length, 
+              "Correct number of links were created");
+        for (var i = 0; i < element.childNodes.length; ++i) {
+            equal(element.childNodes[i].nodeName, "A", "Child is a link");
+            equal(element.childNodes[i].textContent, refs[i],
+                  "Link text matches");
+        }
+    });
 });
