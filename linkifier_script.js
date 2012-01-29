@@ -38,7 +38,7 @@ var scripture_reference_regex =
 
 
 function matchScriptureReference(text) {
-    scripture_reference_regex.compile(scripture_reference_regex);
+    scripture_reference_regex.lastIndex = 0;
     if (scripture_reference_regex.exec(text)) {
         return true;
     }
@@ -52,17 +52,18 @@ function replaceScriptureReferences(text) {
 
     while (pos < text.length) {
         var match_index = text.slice(pos).search(scripture_reference_regex);
-        if (!match_index = -1) {
+        if (!match_index == -1) {
             newText = newText + text.slice(pos);
             break;
         }
         if (match_index > pos) {
             newText += text.slice(pos, match_index);
         }
-        newText = newText + '<a href="#">'; // TODO: make correct link.
-        newText = newText + text.slice(match_index, scripture_reference_regex.lastIndex);
-        newText = newText + '</a>';
-        pos = scripture_reference_regex.lastIndex;
+        var match = text.slice(match_index).match(scripture_reference_regex);
+        newText += '<a href="#">'; // TODO: make correct link.
+        newText += match[0];
+        newText += '</a>';
+        pos = match_index + match[0].length;
     }
     return newText;
 }
