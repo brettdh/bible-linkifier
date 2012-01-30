@@ -46,7 +46,9 @@ function matchScriptureReference(text) {
 }
 
 function linkifySingleScriptureReference(match) {
-    return '<a href="#">' + match + '</a>';
+    var baseSearchURL = "http://www.biblegateway.com/passage/?search=";
+    var url = baseSearchURL + encodeURIComponent(match);
+    return '<a href="' + url + '">' + match + '</a>';
 }
 
 function replaceScriptureReferences(text) {
