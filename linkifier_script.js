@@ -58,6 +58,14 @@ function replaceScriptureReferences(text) {
     });
 }
 
+function shouldNotLinkify(node) {
+    var blacklist = ["A", "INPUT"];
+    if ($.inArray(node.nodeName, blacklist) != -1) {
+        return true;
+    }
+    return false;
+}
+
 // Search the text nodes for scripture references and linkify them.
 // Return the number of references found.
 var replaceAllScriptureReferences = function() {
@@ -68,17 +76,18 @@ var replaceAllScriptureReferences = function() {
     while (nodes_to_explore.length > 0) {
         var node = nodes_to_explore.shift();
 
-        if (node.nodeName == "A") {
-            // don't linkify any references that are already links
-            continue;
-        }
         for (var i = 0; i < node.childNodes.length; ++i) {
             nodes_to_explore.push(node.childNodes[i]);
         }
+        if (shouldNotLinkify(node)) {
+            continue;
+        }
 
-        node.textContent = replaceScriptureReferences(node.textContent);
-
+        var jnode = $(node);
+        var htmlContent = jnode.html();
+        if (htmlContent != null) {
+            jnode.html(replaceScriptureReferences(htmlContent));
+        }
     }
     return num_replaced;
 }
-

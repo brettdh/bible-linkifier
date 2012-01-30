@@ -4,7 +4,8 @@
   "description": "Turns scripture references into links.",
   "background_page": "background.html",
   "content_scripts": [
-    { "matches": ["http://*/*"], "js": ["linkifier_script.js"] }
+    { "matches": ["http://*/*", "file://*/*"], 
+      "js": ["jquery-latest.js", "linkifier_script.js"] }
   ],
   "permissions": [
     "tabs"
