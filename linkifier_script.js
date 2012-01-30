@@ -45,27 +45,15 @@ function matchScriptureReference(text) {
     return false;
 }
 
-function replaceScriptureReferences(text) {
-    //return '<a href="#">' + text + '</a><a href="#">blah</a>';
-    var newText = "";
-    var pos = 0; // beginning of search
+function linkifySingleScriptureReference(match) {
+    return '<a href="#">' + match + '</a>';
+}
 
-    while (pos < text.length) {
-        var match_index = text.slice(pos).search(scripture_reference_regex);
-        if (!match_index == -1) {
-            newText = newText + text.slice(pos);
-            break;
-        }
-        if (match_index > pos) {
-            newText += text.slice(pos, match_index);
-        }
-        var match = text.slice(match_index).match(scripture_reference_regex);
-        newText += '<a href="#">'; // TODO: make correct link.
-        newText += match[0];
-        newText += '</a>';
-        pos = match_index + match[0].length;
-    }
-    return newText;
+function replaceScriptureReferences(text) {
+    scripture_reference_regex.lastIndex = 0;
+    return text.replace(scripture_reference_regex, function(match) {
+        return linkifySingleScriptureReference(match);
+    });
 }
 
 // Search the text nodes for scripture references and linkify them.

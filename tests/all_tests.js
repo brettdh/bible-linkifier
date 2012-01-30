@@ -19,19 +19,29 @@ $(document).ready(function(){
     });
 
     test("linkify all scripture references in a string", function() {
+        var strings = ["blah blee bloo ", " blargh blough ", " blaaa"]
         var refs = ["Genesis 4:3-4", "1 Chronicles 3"];
-        var text = "blah blee bloo " + refs[0] +
-                   " blargh blough " + refs[1] + " blaaa";
+        var text = strings[0] + refs[0] + strings[1] + refs[1] + strings[2];
+        var refnum = 0;
+        var strnum = 0;
         var linkified = replaceScriptureReferences(text);
 
         var element = document.createElement("div");
         element.innerHTML = linkified;
-        equal(element.childNodes.length, refs.length, 
-              "Correct number of links were created");
+        equal(element.childNodes.length, refs.length + strings.length, 
+              "Correct number of children were created");
         for (var i = 0; i < element.childNodes.length; ++i) {
-            equal(element.childNodes[i].nodeName, "A", "Child is a link");
-            equal(element.childNodes[i].textContent, refs[i],
-                  "Link text matches");
+            var expected = "";
+            var type = "";
+            if (element.childNodes[i].nodeName == "A") {
+                expected = refs[refnum++];
+                type = "Link";
+            } else {
+                expected = strings[strnum++];
+                type = "String";
+            }
+            equal(element.childNodes[i].textContent, expected,
+                  type + " text matches");
         }
     });
 });
