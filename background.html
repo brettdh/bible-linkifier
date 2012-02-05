@@ -1,0 +1,19 @@
+<script>
+
+function updateLinks(tabId) {
+    chrome.tabs.sendRequest(tabId, {}, function(numLinks) {
+        //alert("created some links");
+    });
+}
+
+chrome.tabs.onUpdated.addListener(function(tabId, change, tab) {
+    if (change.status == "complete") {
+        updateLinks(tabId);
+    }
+});
+
+// Ensure the current selected tab is set up.
+chrome.tabs.getSelected(null, function(tab) {
+    updateLinks(tab.id);
+});
+</script>

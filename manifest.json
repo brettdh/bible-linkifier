@@ -1,0 +1,13 @@
+{
+  "name": "Bible Linkifier",
+  "version": "0.0.1",
+  "description": "Turns scripture references into links.",
+  "background_page": "background.html",
+  "content_scripts": [
+    { "matches": ["http://*/*", "file://*/*"], 
+      "js": ["jquery-latest.js", "linkifier_script.js"] }
+  ],
+  "permissions": [
+    "tabs"
+  ]
+}
