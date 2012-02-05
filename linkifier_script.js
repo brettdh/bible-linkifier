@@ -22,16 +22,21 @@ var books = [
     "1 Peter", "2 Peter", "1 John", "2 John", "3 John", "Jude", 
     "Revelation",
 ];
-
 var books_re_group = "(" + books.join("|") + ")";
+
+var not_inside_tag_re = "(>[^<>]*)";
+
 var scripture_ref_re_pattern = 
+    not_inside_tag_re + 
+    "(" + 
     books_re_group + 
     "\\s+[0-9]+" + // chapter number (required)
     // verse range (optional)
-    "(:" +
+    "(?::" +
     "[0-9]+" + // single verse number
-    "(-[0-9]+)?" + // verse range endpoint (optional)
-    ")?"; // end optional verse range
+    "(?:-[0-9]+)?" + // verse range endpoint (optional)
+    ")?" + // end optional verse range
+    ")"; // end scripture reference group
     
 var scripture_reference_regex = 
     new RegExp(scripture_ref_re_pattern, "gi");
@@ -45,16 +50,17 @@ function matchScriptureReference(text) {
     return false;
 }
 
-function linkifySingleScriptureReference(match) {
+function linkifySingleScriptureReference(match, preamble, reference) {
     var baseSearchURL = "http://www.biblegateway.com/passage/?search=";
-    var url = baseSearchURL + encodeURIComponent(match);
-    return '<a href="' + url + '">' + match + '</a>';
+    var url = baseSearchURL + encodeURIComponent(reference);
+    var newString = preamble + '<a href="' + url + '">' + reference + '</a>';
+    return newString;
 }
 
 function replaceScriptureReferences(text) {
     scripture_reference_regex.lastIndex = 0;
-    return text.replace(scripture_reference_regex, function(match) {
-        return linkifySingleScriptureReference(match);
+    return text.replace(scripture_reference_regex, function(match, preamble, reference) {
+        return linkifySingleScriptureReference(match, preamble, reference);
     });
 }
 
